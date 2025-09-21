@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'onboarding/onboarding_screen.dart';
+import 'package:rive/rive.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,11 +17,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black38),
       ),
-      home:  const OnBoardingScreen(),
+      home: const MyRiveAnimation(),
     );
   }
 }
 
+class MyRiveAnimation extends StatelessWidget {
+  const MyRiveAnimation({super.key});
 
-
-
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: RiveAnimation.asset('assets/onboarding_animation01.riv'),
+      ),
+    );
+  }
+}
