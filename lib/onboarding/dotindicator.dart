@@ -13,7 +13,7 @@ class DotIndicator extends StatelessWidget {
             width: 6.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isSelected? Colors.white: Colors.white38,
+              color: isSelected? Colors.black: Colors.grey,
             ),
         ),
     );

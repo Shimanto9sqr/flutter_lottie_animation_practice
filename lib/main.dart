@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'onboarding/onboarding_screen.dart';
+import 'package:lottie_animation/rive_anim.dart';
 import 'package:rive/rive.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await RiveFile.initialize();
   runApp(const MyApp());
 }
 
@@ -17,21 +18,26 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black38),
       ),
-      home: const MyRiveAnimation(),
+      home:  MyRiveAnimation(),
     );
   }
 }
 
-class MyRiveAnimation extends StatelessWidget {
-  const MyRiveAnimation({super.key});
+// class SplashScreen extends StatelessWidget {
+//   const SplashScreen({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Stack(
+//         children: [
+//           Transform.scale(
+//             scale: 1.5,
+//             child: MyRiveAnimation(),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: RiveAnimation.asset('assets/onboarding_animation01.riv'),
-      ),
-    );
-  }
-}
