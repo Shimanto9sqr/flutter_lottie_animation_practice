@@ -16,8 +16,8 @@ class MyRiveAnimation extends StatefulWidget {
 class _MyRiveAnimationState extends State<MyRiveAnimation> {
   //final RiveAnimationController _controller = SimpleAnimation('Animation');
   void getStateMachinesNames() async{
-    final byte = await rootBundle.load('assets/apartment.riv');
-    final file = RiveFile.import(byte);
+    final riveOnboard = await rootBundle.load('assets/rive_onboarding.riv');
+    final file = RiveFile.import(riveOnboard);
     bool isInputPresent = false;
     final artBoard = file.mainArtboard;
     for(final controller in artBoard.stateMachines){
@@ -29,17 +29,22 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
       print('input exist?:$isInputPresent');
     }
   }
+  // late ByteData riveOnboard;
+  // late RiveFile file;
+  // final riveController = RiveWidgetController();
+  var currentIndex= 0;
   final _pageController = PageController();
   late RiveAnimation animation;
   late StateMachineController stateMachineController;
-  SMINumber? _transitionInput;
+  //SMINumber? _transitionInput;
+  List<SMITrigger> triggerInput =[];
 
   @override
   void initState(){
     super.initState();
     getStateMachinesNames();
     animation = RiveAnimation.asset(
-      'assets/apartment.riv',
+      'assets/rive_onboarding.riv',
       artboard: 'Artboard',
       fit: BoxFit.contain,
       onInit: onRiveInit,
@@ -47,9 +52,22 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
   }
 
   void onRiveInit(Artboard artboard){
-    stateMachineController = StateMachineController.fromArtboard(artboard,'Houses')!;
+    stateMachineController = StateMachineController.fromArtboard(artboard,'State Machine')!;
     artboard.addController(stateMachineController);
-    _transitionInput = stateMachineController.findInput<double>('Number of Rooms') as SMINumber?;
+    final stateMachine = stateMachineController.stateMachine;
+    print('State Machine name : ${stateMachine.name}');
+    for(final trigger in stateMachine.inputs){
+      print('input exist?:${trigger.name}');
+      if(trigger.name=='Screen Number'){
+        continue;
+      }
+      triggerInput.add(stateMachineController.findInput<bool>(trigger.name) as SMITrigger);
+    }
+    // triggerInput.add(stateMachineController.findInput<bool>('1st Screen Trigger') as SMITrigger);
+    // triggerInput.add(stateMachineController.findInput<bool>('2nd Screen Trigger') as SMITrigger);
+    // triggerInput.add(stateMachineController.findInput<bool>('3rd Screen Trigger') as SMITrigger);
+    // triggerInput.add(stateMachineController.findInput<bool>('4th Screen Trigger') as SMITrigger);
+    //_transitionInput = stateMachineController.findInput<double>('Number of Rooms') as SMINumber?;
   }
 
   @override
@@ -71,7 +89,8 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
             bottom: 20,
             child: Transform.scale(
                 scale: 1,
-                child: animation),
+                child: animation,
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -82,13 +101,13 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
                   Flexible(
                     child: PageView.builder(
                       controller: _pageController,
-                      itemCount: buildings.length,
+                      itemCount: 5,
                       itemBuilder: (BuildContext context, int index){
-                        String building = buildings[index];
+                        //String building = buildings[index];
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(building,
+                            Text('Transition',
                               style: TextStyle(
                                 fontSize: 25.0,
                                 fontWeight: FontWeight.bold,
@@ -99,7 +118,11 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
                       },
                       onPageChanged: (value){
                         setState(() {
-                          _transitionInput?.value = value.toDouble();
+                          currentIndex =value-1;
+                          print(value);
+                          print(triggerInput[currentIndex].name);
+                          triggerInput[currentIndex].fire();
+                         // _transitionInput?.value = value.toDouble();
                         });
                       },
 
@@ -108,8 +131,8 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      for (int index = 0; index < buildings.length; index++)
-                        DotIndicator(isSelected: index == _transitionInput?.value.toInt() ),
+                      for (int index = 0; index < 5; index++)
+                        DotIndicator(isSelected: index == currentIndex ),
                     ],
                   ),
                   const SizedBox(height: 75),
@@ -123,4 +146,4 @@ class _MyRiveAnimationState extends State<MyRiveAnimation> {
   }
 }
 
-List<String> buildings=['Start','2 storied','3 storied','4 storied','5 storied','6 storied','7 storied'];
+//List<String> buildings=['Start','2 storied','3 storied','4 storied','5 storied','6 storied','7 storied'];
